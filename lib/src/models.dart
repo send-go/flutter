@@ -4,11 +4,16 @@ class Contact {
   final String? name;
   final String? var1, var2, var3, var4, var5, var6, var7, var8;
 
+  /// 임의 명명 템플릿 변수 (예: {'title': '...'}) → 알림톡 #{title} 치환.
+  /// contact 오브젝트에 평탄하게 직렬화됩니다.
+  final Map<String, String>? variables;
+
   const Contact({
     required this.contact,
     this.name,
     this.var1, this.var2, this.var3, this.var4,
     this.var5, this.var6, this.var7, this.var8,
+    this.variables,
   });
 
   Map<String, dynamic> toJson() => {
@@ -22,6 +27,7 @@ class Contact {
     if (var6 != null) 'var6': var6,
     if (var7 != null) 'var7': var7,
     if (var8 != null) 'var8': var8,
+    if (variables != null) ...variables!,
   };
 }
 

@@ -220,7 +220,7 @@ try {
 | `kakaoSenderKey` | `String?` | 선택 | `null` | 카카오 발신프로필 키 |
 | `smsSenderKey` | `String?` | 선택 | `null` | SMS 발신자 키 |
 | `apiVersion` | `String` | 선택 | `'v2'` | API 버전 (`v1` \| `v2`) |
-| `baseUrl` | `String` | 선택 | `'https://api.sendgo.io'` | API 기본 URL |
+| `baseUrl` | `String` | 선택 | `'https://sendgo.io'` | API 기본 URL |
 
 ---
 

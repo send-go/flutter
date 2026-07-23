@@ -72,7 +72,7 @@ class SendgoClient {
     String? kakaoSenderKey,
     String? smsSenderKey,
     String apiVersion = 'v1',
-    String baseUrl = 'https://api.sendgo.io',
+    String baseUrl = 'https://sendgo.io',
   }) {
     final tm = TokenManager(
         baseUrl: baseUrl, accessKey: accessKey, secretKey: secretKey, apiVersion: apiVersion);
