@@ -1,0 +1,16 @@
+name: Publish to pub.dev
+
+# vX.Y.Z 태그 push 시 pub.dev 로 배포합니다.
+# pub.dev Automated Publishing(OIDC) 사용 — 장기 토큰 불필요.
+# 사전 조건: pub.dev 패키지 Admin → Automated publishing → GitHub Actions,
+#            repository = send-go/flutter, tag pattern = v{{version}} 등록.
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    permissions:
+      id-token: write   # OIDC (pub.dev Automated Publishing)
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
