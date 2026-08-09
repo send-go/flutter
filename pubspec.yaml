@@ -1,8 +1,8 @@
 name: sendgo_flutter
 description: Sendgo Flutter SDK — 카카오 알림톡/친구톡, SMS/LMS/MMS
-version: 1.0.1
+version: 1.0.2
 homepage: https://sendgo.io
-repository: https://github.com/sendgo-dev/sendgo-flutter
+repository: https://github.com/send-go/flutter
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
