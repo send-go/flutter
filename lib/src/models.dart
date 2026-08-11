@@ -118,6 +118,147 @@ class FriendtalkRequest {
   };
 }
 
+/// 카카오 브랜드메시지 요청.
+///
+/// 브랜드메시지는 친구톡의 후속 채널로, [messageType] 에는 친구톡 코드
+/// (FT/FI/FW/FL/FC/FM/FP/FA)를 그대로 넘기며 브랜드메시지 코드
+/// (BT/BI/BW/BL/BC/BM/BP/BA) 변환은 서버가 처리한다.
+///
+/// [targeting] 은 M(채널 친구) / N(비친구) / I(전체) / F(동보)이며,
+/// F 는 수신자 목록을 카카오 측에서 확장하므로 [contacts] 를 넘기지 않는다.
+class BrandMessageRequest {
+  final String friendTemplateUuid;
+  final String targeting;
+  final String messageType;
+  final List<Contact>? contacts;
+  final String? content;
+  final String scheduleType;
+  final String? at;
+  final List<Map<String, dynamic>> buttons;
+  final String? imageUrl;
+  final String? imageLink;
+  final String adFlag;
+  final String adult;
+  final String pushAlarm;
+  final String? header;
+  final Map<String, dynamic>? coupon;
+  final Map<String, dynamic>? item;
+  final Map<String, dynamic>? commerce;
+  final List<Map<String, dynamic>>? list;
+  final Map<String, dynamic>? head;
+  final Map<String, dynamic>? tail;
+  final Map<String, dynamic>? video;
+  final String? additionalContent;
+  final String? friendGroupKey;
+  final String replaceSms;
+  final String? smsSubject;
+  final String? smsContent;
+  final String? rejectServiceId;
+  final List<String> webhooks;
+
+  const BrandMessageRequest({
+    required this.friendTemplateUuid,
+    this.targeting = 'M',
+    this.messageType = 'FT',
+    this.contacts,
+    this.content,
+    this.scheduleType = 'DIRECTLY',
+    this.at,
+    this.buttons = const [],
+    this.imageUrl,
+    this.imageLink,
+    this.adFlag = 'Y',
+    this.adult = 'N',
+    this.pushAlarm = 'Y',
+    this.header,
+    this.coupon,
+    this.item,
+    this.commerce,
+    this.list,
+    this.head,
+    this.tail,
+    this.video,
+    this.additionalContent,
+    this.friendGroupKey,
+    this.replaceSms = 'N',
+    this.smsSubject,
+    this.smsContent,
+    this.rejectServiceId,
+    this.webhooks = const [],
+  });
+
+  /// [targeting] 이 'F'(동보)면 수신자 목록이 없으므로 contacts 키를 넣지 않는다.
+  /// 빈 배열을 보내면 잘못된 요청으로 거절된다.
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'at': at,
+      'scheduleType': scheduleType,
+      'targeting': targeting,
+      'messageType': messageType,
+      'friendTemplateUuid': friendTemplateUuid,
+      'content': content,
+      'buttons': buttons,
+      'imageUrl': imageUrl,
+      'imageLink': imageLink,
+      'adFlag': adFlag,
+      'adult': adult,
+      'pushAlarm': pushAlarm,
+      'header': header,
+      'coupon': coupon,
+      'item': item,
+      'commerce': commerce,
+      'list': list,
+      'head': head,
+      'tail': tail,
+      'video': video,
+      'additionalContent': additionalContent,
+      'friendGroupKey': friendGroupKey,
+      'replaceSms': replaceSms,
+      'smsSubject': replaceSms == 'Y' ? smsSubject : null,
+      'smsContent': replaceSms == 'Y' ? smsContent : null,
+      'rejectServiceId': rejectServiceId,
+      'webhooks': webhooks,
+    };
+
+    if (targeting != 'F') {
+      json['contacts'] = (contacts ?? const <Contact>[]).map((c) => c.toJson()).toList();
+    }
+
+    return json;
+  }
+
+  /// 동보 발송용 사본을 만든다 (targeting 'F', contacts 제거).
+  BrandMessageRequest asBroadcast() => BrandMessageRequest(
+        friendTemplateUuid: friendTemplateUuid,
+        targeting: 'F',
+        messageType: messageType,
+        content: content,
+        scheduleType: scheduleType,
+        at: at,
+        buttons: buttons,
+        imageUrl: imageUrl,
+        imageLink: imageLink,
+        adFlag: adFlag,
+        adult: adult,
+        pushAlarm: pushAlarm,
+        header: header,
+        coupon: coupon,
+        item: item,
+        commerce: commerce,
+        list: list,
+        head: head,
+        tail: tail,
+        video: video,
+        additionalContent: additionalContent,
+        friendGroupKey: friendGroupKey,
+        replaceSms: replaceSms,
+        smsSubject: smsSubject,
+        smsContent: smsContent,
+        rejectServiceId: rejectServiceId,
+        webhooks: webhooks,
+      );
+}
+
 /// SMS/LMS/MMS 요청
 class SmsRequest {
   final String content;
@@ -150,4 +291,34 @@ class SmsRequest {
     'files': files,
     'contacts': contacts.map((c) => c.toJson()).toList(),
   };
+}
+
+/// 짧은 URL 생성 요청.
+class ShortUrlRequest {
+  /// 줄일 원본 URL. http/https 만 허용된다.
+  final String targetUrl;
+
+  /// 관리 화면에서 구분하기 위한 이름.
+  final String? title;
+
+  /// 이 시각 이후에는 리다이렉트하지 않고 410 Gone 을 반환한다.
+  final String? expiresAt;
+
+  /// true 면 같은 URL 이라도 새 코드를 만든다.
+  /// 캠페인별로 반응을 분리해 집계할 때 사용한다.
+  final bool forceNew;
+
+  const ShortUrlRequest({
+    required this.targetUrl,
+    this.title,
+    this.expiresAt,
+    this.forceNew = false,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'targetUrl': targetUrl,
+        if (title != null) 'title': title,
+        if (expiresAt != null) 'expiresAt': expiresAt,
+        'forceNew': forceNew,
+      };
 }

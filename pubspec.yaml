@@ -1,19 +1,23 @@
 name: sendgo_flutter
-description: Sendgo Flutter SDK — 카카오 알림톡/친구톡, SMS/LMS/MMS
-version: 1.0.2
+description: Sendgo Dart/Flutter SDK — 카카오 알림톡/친구톡/브랜드메시지, SMS/LMS/MMS
+version: 1.1.0
 homepage: https://sendgo.io
 repository: https://github.com/send-go/flutter
 
+# 순수 Dart 패키지입니다. lib/ 는 dart:convert 와 package:http 만 사용하며
+# Flutter API를 전혀 쓰지 않습니다.
+#
+# 1.0.x 는 `flutter: sdk: flutter` 를 의존성으로 선언했는데, 그러면 Flutter SDK가
+# 없는 환경에서는 설치가 아예 되지 않았습니다. 이 SDK는 API 키를 다루므로
+# 서버에서만 써야 하는데(README 참고), 정작 그 서버 환경 — Dart Frog, Shelf,
+# Serverpod, Cloud Functions — 에서 못 쓰고 절대 쓰면 안 되는 Flutter 앱에서만
+# 쓸 수 있는 상태였습니다. 이제 순수 Dart 패키지이므로 양쪽 모두에서 설치됩니다.
 environment:
   sdk: ">=3.3.0 <4.0.0"
-  flutter: ">=3.19.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   http: ^1.2.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
+  lints: ^4.0.0
+  test: ^1.25.0
