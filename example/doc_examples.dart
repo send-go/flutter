@@ -1,5 +1,9 @@
 // Type-checks the API surface used by the published guides.
 // Not run — `dart analyze` proving it compiles is the point.
+//
+// 친구톡 예제는 2025-12-31 종료된 API 를 그대로 남겨 둔다. 기존 사용자의 코드가
+// 아직 동작한다는 것을 보여야 하므로, 의도적으로 deprecated 경고만 끈다.
+// ignore_for_file: deprecated_member_use_from_same_package
 import 'dart:io';
 
 import 'package:sendgo_flutter/sendgo_flutter.dart';
@@ -39,6 +43,7 @@ Future<void> alimtalk() async {
   ));
 }
 
+/// 친구톡은 2025-12-31 종료되었다. brandMessage() 예제를 참고할 것.
 Future<void> friendtalk() async {
   await sendgo.friendtalk.send(FriendtalkRequest(
     content: '7 月限时特惠开始了，欢迎查看。',
