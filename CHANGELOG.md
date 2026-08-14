@@ -1,3 +1,14 @@
+## 1.2.0
+
+- **친구톡 Deprecated 표기.** 친구톡은 카카오 정책에 따라 2025-12-31 종료되었고,
+  2026-01-01 부터 친구톡 발송 요청은 카카오 측에서 브랜드메시지(자유형)로 자동
+  대체 발송된다. `FriendtalkService` 와 `SendgoClient.friendtalk` 에
+  `@Deprecated` 를 달았다.
+- 자유 본문 타입(FT/FI/FW)을 개별 수신자에게 보내는 경로는 아직 친구톡 API
+  뿐이라는 점을 문서에 명시했다 — 브랜드메시지 API 는 그 조합에
+  `NOT_A_BRAND_MESSAGE` 를 반환한다.
+- README 태그라인에서 친구톡을 브랜드메시지로 교체하고 전환 안내를 추가했다.
+
 ## 1.1.0
 
 - **순수 Dart 패키지로 전환.** `flutter: sdk: flutter` 의존성과 `flutter` 환경
