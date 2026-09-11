@@ -4,6 +4,14 @@ name: Publish to pub.dev
 # pub.dev Automated Publishing(OIDC) 사용 — 장기 토큰 불필요.
 # 사전 조건: pub.dev 패키지 Admin → Automated publishing → GitHub Actions,
 #            repository = send-go/flutter, tag pattern = v{{version}} 등록.
+#
+# dart-lang/setup-dart 의 재사용 워크플로(publish.yml@v1)를 쓰지 않고 단계를
+# 직접 적는 이유: 그 워크플로는 OIDC 로 받은 PUB_TOKEN 을 `dart pub get` 에까지
+# 걸어두는데, 이 토큰은 "sendgo_flutter 를 발행할 권한"만 갖는다. 그래서 pub.dev
+# 가 공개 패키지(test, http, crypto) 조회까지 403 으로 막아
+#   Because sendgo_flutter depends on test any which doesn't exist
+#   (authorization failed)
+# 로 죽는다. 의존성 해석에는 인증이 필요 없으므로 그 단계에서만 토큰을 비운다.
 on:
   push:
     tags:
@@ -11,6 +19,24 @@ on:
 
 jobs:
   publish:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write   # OIDC (pub.dev Automated Publishing)
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: 의존성 해석 (인증 없이)
+        run: dart pub get
+        env:
+          PUB_TOKEN: ""
+
+      - name: 정적 분석
+        run: dart analyze --fatal-infos
+
+      - name: 발행 검증
+        run: dart pub publish --dry-run
+
+      - name: pub.dev 발행
+        run: dart pub publish --force
