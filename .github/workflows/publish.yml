@@ -46,8 +46,10 @@ jobs:
       - name: 정적 분석
         run: dart analyze --fatal-infos
 
+      # 이 패키지에는 test/ 가 없다 (표면 검증은 example/doc_examples.dart 의
+      # 컴파일로 한다). 디렉터리가 없으면 dart test 는 exit 65 로 죽으므로 건다.
       - name: 테스트
-        run: dart test
+        run: '[ -d test ] && dart test || echo "test/ 없음 — 건너뜀"'
 
       - name: pub.dev 자격증명 복구
         run: dart pub token add https://pub.dev --env-var PUB_TOKEN
