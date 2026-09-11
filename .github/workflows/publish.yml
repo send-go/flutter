@@ -51,11 +51,13 @@ jobs:
       - name: 테스트
         run: '[ -d test ] && dart test || echo "test/ 없음 — 건너뜀"'
 
+      # 아래 둘은 태그에서만 돈다. pub.dev 는 OIDC 토큰의 ref 클레임이 등록된
+      # 태그 패턴(v{{version}})과 맞을 때만 받아주므로, main 에서 수동 실행하면
+      # `--dry-run` 조차 `Authentication error (403)` 이 난다. 즉 수동 실행으로
+      # 검증할 수 있는 범위는 해석·분석까지다.
       - name: pub.dev 자격증명 복구
+        if: github.ref_type == 'tag'
         run: dart pub token add https://pub.dev --env-var PUB_TOKEN
-
-      - name: 발행 검증
-        run: dart pub publish --dry-run
 
       - name: pub.dev 발행
         if: github.ref_type == 'tag'
