@@ -138,3 +138,119 @@ Future<void> shortUrls() async {
     forceNew: true,
   ));
 }
+
+/// 1.3.0 관리 API — 등록 · 심사. 가이드에 실린 표면을 타입 검사한다.
+///
+/// 카카오 채널 인증번호와 휴대폰 발신번호 본인인증은 사람이 개입해야 하므로
+/// 여기서도 트리거까지만 쓴다.
+Future<void> managementApi() async {
+  // --- 카카오 채널 등록 (2단계) ---
+  await sendgo.kakaoSenders.requestToken('@my-channel', '01012345678');
+
+  final created = await sendgo.kakaoSenders.create(const KakaoSenderCreateRequest(
+    token: '123456',
+    yellowId: '@my-channel',
+    phoneNumber: '01012345678',
+    categoryCode: '001001',
+  ));
+
+  final kakaoSenderKey =
+      created['data']['sender']['kakaoSenderKey'] as String;
+
+  await sendgo.kakaoSenders.categories();
+  await sendgo.kakaoSenders.list();
+  await sendgo.kakaoSenders.sync();
+  await sendgo.kakaoSenders.sync(kakaoSenderKey);
+  await sendgo.kakaoSenders.applyBrandMessageTargeting(kakaoSenderKey, 'N');
+
+  // --- 알림톡 템플릿 등록 → 검수 요청 → 폴링 ---
+  final template = await sendgo.noticeTemplates.create(NoticeTemplateRequest(
+    kakaoSenderKey: kakaoSenderKey,
+    templateName: '주문 접수 안내',
+    templateContent: '#{name}님, 주문 #{orderNo}이 접수되었습니다.',
+    templateMessageType: 'BA',
+    templateEmphasizeType: 'NONE',
+    categoryCode: '001001',
+    messagePurpose: 'order_delivery',
+    legalBasis: 'transaction',
+    benefitOrigin: 'none',
+    expiryType: 'none',
+  ));
+
+  final templateCode =
+      template['data']['template']['templateCode'] as String;
+
+  await sendgo.noticeTemplates.requestInspection(templateCode);
+  await sendgo.noticeTemplates.sync(templateCode);
+  await sendgo.noticeTemplates
+      .list(kakaoSenderKey: kakaoSenderKey, inspectionStatus: 'APR');
+  await sendgo.noticeTemplates.cancelInspection(templateCode);
+  await sendgo.noticeTemplates.release(templateCode);
+  await sendgo.noticeTemplates.delete(templateCode);
+
+  // --- 이미지 템플릿 / 검수 첨부 (multipart) ---
+  final banner = SendgoMultipartFile(
+    fieldName: 'image',
+    fileName: 'banner.jpg',
+    bytes: await File('banner.jpg').readAsBytes(),
+  );
+
+  await sendgo.noticeTemplates.createWithImage(
+    NoticeTemplateRequest(
+      kakaoSenderKey: kakaoSenderKey,
+      templateName: '이벤트 안내',
+      templateContent: '#{name}님께 드리는 안내입니다.',
+      templateEmphasizeType: 'IMAGE',
+      categoryCode: '001001',
+      messagePurpose: 'service_ops',
+      legalBasis: 'transaction',
+      benefitOrigin: 'none',
+      expiryType: 'none',
+    ),
+    banner,
+  );
+
+  await sendgo.noticeTemplates
+      .requestInspection(templateCode, comment: '증빙 첨부', attachments: [banner]);
+
+  // --- 브랜드메시지 템플릿 ---
+  await sendgo.brandTemplates.create(BrandTemplateRequest(
+    kakaoSenderKey: kakaoSenderKey,
+    templateName: '여름 세일 안내',
+    templateType: 'FI',
+    templateContent: '여름 세일이 시작되었습니다.',
+    imageUrl: 'https://mud-kage.kakao.com/example.jpg',
+  ));
+  await sendgo.brandTemplates.list(kakaoSenderKey: kakaoSenderKey);
+  await sendgo.brandTemplates.import(kakaoSenderKey);
+
+  // --- 발신번호 등록 신청 ---
+  await sendgo.senderRegistration.numberTypes();
+  await sendgo.senderRegistration.validate('02-1234-5678', 'team_main');
+
+  await sendgo.senderRegistration.create(
+    const SenderRegistrationRequest(
+      senderAlias: '고객센터 대표번호',
+      senderNumberType: 'team_main',
+      phoneE164: '02-1234-5678',
+    ),
+    [
+      SendgoMultipartFile(
+        fieldName: 'csuCertificate',
+        fileName: 'csu.pdf',
+        bytes: await File('csu.pdf').readAsBytes(),
+      ),
+    ],
+  );
+
+  await sendgo.senderRegistration.list();
+  await sendgo.senderRegistration.update('sender-key', senderAlias: '새 이름');
+
+  // --- 문자 상용구 템플릿 ---
+  await sendgo.messageTemplates.create(const MessageTemplateRequest(
+    messageTranType: 'LMS',
+    messageTranSubject: '주문 안내',
+    messageTranMsg: '주문이 접수되었습니다.',
+  ));
+  await sendgo.messageTemplates.list(messageType: 'LMS');
+}
