@@ -26,3 +26,5 @@ library sendgo_flutter;
 export 'src/models.dart';
 export 'src/exceptions.dart';
 export 'src/sendgo_client.dart';
+
+export 'src/account.dart';
