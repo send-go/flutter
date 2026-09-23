@@ -392,6 +392,8 @@ class KakaoSenderCreateRequest {
 /// 셋은 기본값이 `true` 지만, **내용을 실제로 검토한 뒤에** 그대로 두어야 한다 —
 /// 이 값은 법적 확인의 기록이다.
 class NoticeTemplateRequest {
+  /// 등록 시 폴더 지정. 이동은 templateFolders.assign을 사용합니다.
+  final String? folderUuid;
   /// 발신프로필 키. 수정 시에는 무시된다 (변경 불가).
   final String? kakaoSenderKey;
   final String templateName;
@@ -438,6 +440,7 @@ class NoticeTemplateRequest {
   final bool policyConfirmed;
 
   const NoticeTemplateRequest({
+    this.folderUuid,
     this.kakaoSenderKey,
     required this.templateName,
     required this.templateContent,
@@ -465,6 +468,7 @@ class NoticeTemplateRequest {
   });
 
   Map<String, dynamic> toJson() => {
+        if (folderUuid != null) 'folderUuid': folderUuid,
         if (kakaoSenderKey != null) 'kakaoSenderKey': kakaoSenderKey,
         'templateName': templateName,
         'templateContent': templateContent,
@@ -499,6 +503,8 @@ class NoticeTemplateRequest {
 /// [templateType] 은 친구톡 표기(FT/FI/FW/FL/FC/FM/FP/FA)를 그대로 쓴다 —
 /// 서버가 chatBubbleType 으로 변환한다.
 class BrandTemplateRequest {
+  /// 등록 시 폴더 지정. 이동은 templateFolders.assign을 사용합니다.
+  final String? folderUuid;
   final String? kakaoSenderKey;
   final String templateName;
   final String templateType;
@@ -526,6 +532,7 @@ class BrandTemplateRequest {
   final List<Map<String, dynamic>>? subWideItemList;
 
   const BrandTemplateRequest({
+    this.folderUuid,
     this.kakaoSenderKey,
     required this.templateName,
     this.templateType = 'FT',
@@ -548,6 +555,7 @@ class BrandTemplateRequest {
   });
 
   Map<String, dynamic> toJson() => {
+        if (folderUuid != null) 'folderUuid': folderUuid,
         if (kakaoSenderKey != null) 'kakaoSenderKey': kakaoSenderKey,
         'templateName': templateName,
         'templateType': templateType,

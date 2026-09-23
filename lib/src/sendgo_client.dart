@@ -259,12 +259,14 @@ class NoticeTemplateService {
 
   /// 목록 조회.
   Future<Map<String, dynamic>> list({
+    String? folderUuid,
     String? kakaoSenderKey,
     String? inspectionStatus,
     String? search,
     int? count,
   }) =>
       _http.get('notice-templates', {
+        'folderUuid': folderUuid,
         'kakaoSenderKey': kakaoSenderKey,
         'inspectionStatus': inspectionStatus,
         'search': search,
@@ -368,11 +370,13 @@ class BrandTemplateService {
 
   /// 목록 조회.
   Future<Map<String, dynamic>> list({
+    String? folderUuid,
     String? kakaoSenderKey,
     String? search,
     int? count,
   }) =>
       _http.get('brand-templates', {
+        'folderUuid': folderUuid,
         'kakaoSenderKey': kakaoSenderKey,
         'search': search,
         'count': count?.toString(),
@@ -653,6 +657,8 @@ class SendgoClient {
   /// 카카오 발신프로필(채널) 등록·동기화. v2 전용, 기업 계정 전용.
   late final KakaoSenderService kakaoSenders;
 
+  /// 템플릿 공용 폴더. v2 전용, 기업 계정 전용.
+  late final TemplateFolderService templateFolders;
   /// 알림톡 템플릿 등록·수정·검수 요청. v2 전용, 기업 계정 전용.
   late final NoticeTemplateService noticeTemplates;
 
@@ -694,6 +700,7 @@ class SendgoClient {
     sms        = SmsService(http, smsSenderKey);
 
     kakaoSenders       = KakaoSenderService(http);
+    templateFolders    = TemplateFolderService(http);
     noticeTemplates    = NoticeTemplateService(http);
     brandTemplates     = BrandTemplateService(http);
     senderRegistration = SenderRegistrationService(http);
@@ -702,4 +709,26 @@ class SendgoClient {
     rejectedNumbers    = RejectedNumberService(http);
     webhook            = WebhookService(http);
   }
+}
+
+/// 기업 계정의 템플릿 공용 폴더. v2 전용.
+class TemplateFolderService {
+  final SendgoHttpClient _http;
+  TemplateFolderService(this._http);
+
+  /// 폴더 트리와 유형(notice/brand)별 템플릿 수를 조회합니다.
+  Future<Map<String, dynamic>> list({String? templateType, String? kakaoSenderKey}) =>
+      _http.get('template-folders', {'templateType': templateType, 'kakaoSenderKey': kakaoSenderKey});
+
+  /// 루트 또는 하위 폴더 생성.
+  Future<Map<String, dynamic>> create({required String name, String? parentUuid}) =>
+      _http.post('template-folders', {'name': name, 'parentUuid': parentUuid});
+
+  /// 1~100개 템플릿 이동. folderUuid가 null이면 미분류로 이동합니다.
+  Future<Map<String, dynamic>> assign({required String templateType, required String kakaoSenderKey,
+      required List<String> templateCodes, required String? folderUuid}) =>
+      _http.patch('template-folders/templates', {
+        'templateType': templateType, 'kakaoSenderKey': kakaoSenderKey,
+        'templateCodes': templateCodes, 'folderUuid': folderUuid,
+      });
 }
