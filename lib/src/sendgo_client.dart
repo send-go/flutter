@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import 'client.dart';
+import 'email.dart';
 import 'models.dart';
 import 'token_manager.dart';
 
@@ -60,7 +61,7 @@ class BrandMessageService {
 
   /// 브랜드메시지를 전송한다.
   ///
-  /// targeting 이 M/N/I 이면 contacts 가 필요하고 응답 data 에 발송 건수
+  /// targeting 이 M/N/I/O 이면 contacts 가 필요하고 응답 data 에 발송 건수
   /// (sentCount)가 담긴다. F 는 동보 발송이라 접수 여부(accepted)만 반환되므로,
   /// 그 경우 [broadcast] 가 더 명확하다.
   Future<Map<String, dynamic>> send(BrandMessageRequest request) {
@@ -641,6 +642,7 @@ class WebhookService {
 
 /// Sendgo Flutter SDK 메인 클라이언트.
 class SendgoClient {
+  late final EmailService email;
   late final AlimtalkService alimtalk;
 
   /// 카카오 친구톡.
@@ -700,6 +702,7 @@ class SendgoClient {
     sms        = SmsService(http, smsSenderKey);
 
     kakaoSenders       = KakaoSenderService(http);
+    email = EmailService(tm, baseUrl, apiVersion);
     templateFolders    = TemplateFolderService(http);
     noticeTemplates    = NoticeTemplateService(http);
     brandTemplates     = BrandTemplateService(http);

@@ -124,7 +124,7 @@ class FriendtalkRequest {
 /// (FT/FI/FW/FL/FC/FM/FP/FA)를 그대로 넘기며 브랜드메시지 코드
 /// (BT/BI/BW/BL/BC/BM/BP/BA) 변환은 서버가 처리한다.
 ///
-/// [targeting] 은 M(채널 친구) / N(비친구) / I(전체) / F(동보)이며,
+/// [targeting] 은 M(친구+비친구) / N(비친구) / I(친구교집합) / O(친구만) / F(동보)이며,
 /// F 는 수신자 목록을 카카오 측에서 확장하므로 [contacts] 를 넘기지 않는다.
 class BrandMessageRequest {
   final String friendTemplateUuid;

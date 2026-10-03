@@ -28,3 +28,5 @@ export 'src/exceptions.dart';
 export 'src/sendgo_client.dart';
 
 export 'src/account.dart';
+
+export 'src/email.dart';
