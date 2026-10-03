@@ -63,7 +63,7 @@ class EmailService {
             response.statusCode == 401 &&
             _tokens!.shouldRefresh(401, error['code'] as String?)) {
           _tokens.invalidate();
-          return _request(method, path, body, query, raw, true);
+          return await _request(method, path, body, query, raw, true);
         }
         throw SendgoException.fromResponse(
             response.statusCode, error, path, 'v2');

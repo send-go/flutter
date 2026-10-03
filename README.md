@@ -612,7 +612,7 @@ MIT License © 2026 [Sendgo](https://sendgo.io)
 
 *키워드: 카카오 알림톡 Flutter, 카카오 친구톡 Dart, SMS 발송 Flutter, 알림톡 Dart SDK, Dart 카카오 API, Sendgo Flutter SDK, pub.dev 알림 발송*
 
-## 계정·조직·API 키 관리 (1.6.0)
+## 계정·조직·API 키 관리 (1.6.1)
 
 발송용 `accessKey`/`secretKey`가 없는 단계에서 사용하는 **별도 계정 클라이언트**입니다.
 콘솔에서 발급받은 에이전트 토큰(`SENDGO_AGENT_TOKEN`)으로 `/api/v2/account`를 호출합니다.
@@ -640,7 +640,7 @@ try {
 
 키 생성 인자는 `name`, 선택적 `ipAddresses: [{ip, description}]`이며, 허용 IP 추가 인자는 `ip`, 선택적 `description`입니다. 키·IP 식별자는 응답의 `id`(UUID)를 사용합니다.
 
-## 템플릿 폴더 (1.6.0)
+## 템플릿 폴더 (1.6.1)
 
 기업 계정의 발송용 API 키와 `apiVersion=v2` 설정으로 사용하는 서버 전용 API입니다.
 폴더는 알림톡·브랜드메시지가 공유하며, 목록의 `templateType`은 `notice` 또는 `brand`입니다.
